@@ -13,5 +13,12 @@ namespace Repository
         public CompanyRepository(RepositoryContext context) : base(context)
         {
         }
+
+        public IEnumerable<Company> GetAllCompanies(bool trackChanges)
+        {
+            return FindAll(trackChanges)
+                .OrderBy(company => company.Name)
+                .ToList();
+        }
     }
 }
