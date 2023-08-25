@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 using System;
@@ -23,7 +24,7 @@ namespace CompanyEmployees.Presentation.Controllers
         [HttpGet]
         public IActionResult GetEmploees(Guid companyId)
         {
-            var emploees = _service.EmploeeService.GetEmployees(companyId, trackChanges: false);
+            var emploees = _service.EmployeeService.GetEmployees(companyId, trackChanges: false);
 
             return Ok(emploees);
         }
@@ -31,7 +32,7 @@ namespace CompanyEmployees.Presentation.Controllers
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
         public IActionResult GetEmploees(Guid companyId, Guid id)
         {
-            var emploee = _service.EmploeeService.GetEmployee(companyId, id, trackChanges: false);
+            var emploee = _service.EmployeeService.GetEmployee(companyId, id, trackChanges: false);
 
             return Ok(emploee);
         }
@@ -44,7 +45,7 @@ namespace CompanyEmployees.Presentation.Controllers
                 return BadRequest("EmployeeForCreationDto object is null");
             }
             
-            var emploeeToReturn = _service.EmploeeService.CreateEmployeeForCompany(companyId, employee, trackChanges:false);
+            var emploeeToReturn = _service.EmployeeService.CreateEmployeeForCompany(companyId, employee, trackChanges:false);
 
             return CreatedAtRoute("GetEmployeeForCompany", new { companyId, id = emploeeToReturn.Id }, emploeeToReturn);
         }
@@ -52,7 +53,7 @@ namespace CompanyEmployees.Presentation.Controllers
         [HttpDelete("{id:guid}")]
         public IActionResult DeleteEmployeeForCompany(Guid companyId, Guid id) 
         {
-            _service.EmploeeService.DeleteEmployeeForCompany(companyId, id, trackChanges: false);
+            _service.EmployeeService.DeleteEmployeeForCompany(companyId, id, trackChanges: false);
 
             return NoContent();
         }
@@ -65,9 +66,27 @@ namespace CompanyEmployees.Presentation.Controllers
                 return BadRequest("EmploeeForUpdateDto object is null");
             }
 
-            _service.EmploeeService.UpdateEmployeeForCompany(companyId, id, employee, companyTrackChanges: false, employeeTrackChanges: true);
+            _service.EmployeeService.UpdateEmployeeForCompany(companyId, id, employee, companyTrackChanges: false, employeeTrackChanges: true);
             
             return NoContent();
         }
+
+        [HttpPatch("{id:guid}")]
+        public IActionResult PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
+        {
+            if (patchDoc is null)
+                return BadRequest("patchDoc object sent from client is null.");
+            
+            var result = _service.EmployeeService.GetEmployeeForPatch(companyId, id, compTrackChanges: false, empTrackChanges: true);
+            
+            patchDoc.ApplyTo(result.employeeToPatch);
+            
+            _service.EmployeeService.SaveChangesForPatch(result.employeeToPatch,
+            
+            result.employeeEntity);
+            
+            return NoContent();
+        }
+
     }
 }

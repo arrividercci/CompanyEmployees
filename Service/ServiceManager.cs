@@ -12,15 +12,15 @@ namespace Service
     public sealed class ServiceManager : IServiceManager
     {
         private readonly Lazy<ICompanyService> companyService;
-        private readonly Lazy<IEmploeeService> employeeService;
+        private readonly Lazy<IEmployeeService> employeeService;
         public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, IMapper mapper)
         {
             companyService = new Lazy<ICompanyService>(() => new CompanyService(repositoryManager, logger, mapper));
-            employeeService = new Lazy<IEmploeeService>(() => new EmployeeService(repositoryManager, logger, mapper));
+            employeeService = new Lazy<IEmployeeService>(() => new EmployeeService(repositoryManager, logger, mapper));
         }
 
         public ICompanyService CompanyService => companyService.Value;
 
-        public IEmploeeService EmploeeService => employeeService.Value;
+        public IEmployeeService EmployeeService => employeeService.Value;
     }
 }
