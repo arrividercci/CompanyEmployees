@@ -14,11 +14,31 @@ namespace Repository
         {
         }
 
+        public void CreateCompany(Company company)
+        {
+            Create(company);
+        }
+
+        public void DeleteCompany(Company company)
+        {
+            Delete(company);
+        }
+
         public IEnumerable<Company> GetAllCompanies(bool trackChanges)
         {
             return FindAll(trackChanges)
                 .OrderBy(company => company.Name)
                 .ToList();
+        }
+
+        public IEnumerable<Company> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+        {
+            return FindByCondition(company => ids.Contains(company.Id), trackChanges).ToList();
+        }
+
+        public Company GetCompany(Guid companyId, bool trackChanges)
+        {
+            return FindByCondition(company => company.Id.Equals(companyId), trackChanges).SingleOrDefault();
         }
     }
 }
