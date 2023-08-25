@@ -15,12 +15,24 @@ namespace CompanyEmployees
             LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             
             builder.Services.ConfigureSqlContext(builder.Configuration);
+            
             builder.Services.ConfigureCors();
+            
             builder.Services.ConfigureIISIntegration();
+            
             builder.Services.ConfigureLoggerService();
+            
             builder.Services.ConfigureRepositoryManager();
+            
             builder.Services.ConfigureServiceManager();
-            builder.Services.AddControllers().AddApplicationPart(typeof(AssemplyReference).Assembly);
+            
+            builder.Services.AddControllers(config =>
+            {
+                config.RespectBrowserAcceptHeader= true;
+                config.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters()
+            .AddApplicationPart(typeof(AssemplyReference).Assembly);
+            
             builder.Services.AddAutoMapper(typeof(Program));
 
             var app = builder.Build();
