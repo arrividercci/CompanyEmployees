@@ -22,68 +22,66 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetEmploees(Guid companyId)
+        public async Task<IActionResult> GetEmploees(Guid companyId)
         {
-            var emploees = _service.EmployeeService.GetEmployees(companyId, trackChanges: false);
+            var emploees = await _service.EmployeeService.GetEmployeesAsync(companyId, trackChanges: false);
 
             return Ok(emploees);
         }
 
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
-        public IActionResult GetEmploees(Guid companyId, Guid id)
+        public async Task<IActionResult> GetEmploees(Guid companyId, Guid id)
         {
-            var emploee = _service.EmployeeService.GetEmployee(companyId, id, trackChanges: false);
+            var emploee = await _service.EmployeeService.GetEmployeeAsync(companyId, id, trackChanges: false);
 
             return Ok(emploee);
         }
 
         [HttpPost]
-        public IActionResult CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
+        public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
         {
             if (employee is null)
             {
                 return BadRequest("EmployeeForCreationDto object is null");
             }
             
-            var emploeeToReturn = _service.EmployeeService.CreateEmployeeForCompany(companyId, employee, trackChanges:false);
+            var emploeeToReturn = await _service.EmployeeService.CreateEmployeeForCompanyAsync(companyId, employee, trackChanges:false);
 
             return CreatedAtRoute("GetEmployeeForCompany", new { companyId, id = emploeeToReturn.Id }, emploeeToReturn);
         }
 
         [HttpDelete("{id:guid}")]
-        public IActionResult DeleteEmployeeForCompany(Guid companyId, Guid id) 
+        public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId, Guid id) 
         {
-            _service.EmployeeService.DeleteEmployeeForCompany(companyId, id, trackChanges: false);
+            await _service.EmployeeService.DeleteEmployeeForCompanyAsync(companyId, id, trackChanges: false);
 
             return NoContent();
         }
 
         [HttpPut("{id:guid}")]
-        public IActionResult UpdateEmployee(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto employee)
+        public async Task<IActionResult> UpdateEmployee(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto employee)
         {
             if (employee is null)
             {
                 return BadRequest("EmploeeForUpdateDto object is null");
             }
 
-            _service.EmployeeService.UpdateEmployeeForCompany(companyId, id, employee, companyTrackChanges: false, employeeTrackChanges: true);
+            await _service.EmployeeService.UpdateEmployeeForCompanyAsync(companyId, id, employee, companyTrackChanges: false, employeeTrackChanges: true);
             
             return NoContent();
         }
 
         [HttpPatch("{id:guid}")]
-        public IActionResult PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
         {
             if (patchDoc is null)
                 return BadRequest("patchDoc object sent from client is null.");
             
-            var result = _service.EmployeeService.GetEmployeeForPatch(companyId, id, compTrackChanges: false, empTrackChanges: true);
+            var result = await _service.EmployeeService.GetEmployeeForPatchAsync(companyId, id, compTrackChanges: false, empTrackChanges: true);
             
             patchDoc.ApplyTo(result.employeeToPatch);
             
-            _service.EmployeeService.SaveChangesForPatch(result.employeeToPatch,
-            
-            result.employeeEntity);
+            await _service.EmployeeService.SaveChangesForPatchAsync(result.employeeToPatch, result.employeeEntity);
             
             return NoContent();
         }

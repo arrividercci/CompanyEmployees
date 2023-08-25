@@ -25,9 +25,9 @@ namespace Service
             this._mapper = mapper;
         }
 
-        public EmployeeDto CreateEmployeeForCompany(Guid companyId, EmployeeForCreationDto employee, bool trackChanges)
+        public async Task<EmployeeDto> CreateEmployeeForCompanyAsync(Guid companyId, EmployeeForCreationDto employee, bool trackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, trackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, trackChanges);
 
             if (company is null)
             {
@@ -38,23 +38,23 @@ namespace Service
 
             repository.Employee.CreateEmployeeForCompany(companyId, employeeEntity);
 
-            repository.Save();
+            await repository.SaveAsync();
 
             var employeeToReturn = _mapper.Map<EmployeeDto>(employee);
 
             return employeeToReturn;
         }
 
-        public void DeleteEmployeeForCompany(Guid companyId, Guid id, bool trackChanges)
+        public async Task DeleteEmployeeForCompanyAsync(Guid companyId, Guid id, bool trackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, trackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, trackChanges);
 
             if (company is null)
             {
                 throw new CompanyNotFoundException(companyId);
             }
 
-            var employeeForCompany = repository.Employee.GetEmployee(companyId, id, trackChanges);
+            var employeeForCompany = await repository.Employee.GetEmployeeAsync(companyId, id, trackChanges);
 
             if (employeeForCompany is null)
             {
@@ -63,19 +63,19 @@ namespace Service
 
             repository.Employee.DeleteEmployee(employeeForCompany);
             
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        public EmployeeDto GetEmployee(Guid companyId, Guid id, bool trackChanges)
+        public async Task<EmployeeDto> GetEmployeeAsync(Guid companyId, Guid id, bool trackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, trackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, trackChanges);
 
             if (company == null)
             {
                 throw new CompanyNotFoundException(companyId);
             }
 
-            var emploee = repository.Employee.GetEmployee(companyId, id, trackChanges);
+            var emploee = await repository.Employee.GetEmployeeAsync(companyId, id, trackChanges);
 
             if (emploee == null)
             {
@@ -87,32 +87,32 @@ namespace Service
             return employeeDto;
         }
 
-        public IEnumerable<EmployeeDto> GetEmployees(Guid companyId, bool trackChanges)
+        public async Task<IEnumerable<EmployeeDto>> GetEmployeesAsync(Guid companyId, bool trackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, trackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, trackChanges);
 
             if (company == null)
             {
                 throw new CompanyNotFoundException(companyId);
             }
 
-            var emploees = repository.Employee.GetEmployees(companyId, trackChanges);
+            var emploees = await repository.Employee.GetEmployeesAsync(companyId, trackChanges);
 
             var emploeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(emploees);
 
             return emploeesDto;
         }
 
-        public void UpdateEmployeeForCompany(Guid companyId, Guid id, EmployeeForUpdateDto employee, bool companyTrackChanges, bool employeeTrackChanges)
+        public async Task UpdateEmployeeForCompanyAsync(Guid companyId, Guid id, EmployeeForUpdateDto employee, bool companyTrackChanges, bool employeeTrackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, companyTrackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, companyTrackChanges);
 
             if(company is null)
             {
                 throw new CompanyNotFoundException(companyId);
             }
 
-            var employeeEntity = repository.Employee.GetEmployee(companyId, id, employeeTrackChanges);
+            var employeeEntity = await repository.Employee.GetEmployeeAsync(companyId, id, employeeTrackChanges);
 
             if (employeeEntity is null) 
             {
@@ -121,16 +121,17 @@ namespace Service
 
             _mapper.Map(employee, employeeEntity);
 
-            repository.Save();
+            await repository.SaveAsync();
         }
-        public (EmployeeForUpdateDto employeeToPatch, Employee employeeEntity) GetEmployeeForPatch(Guid companyId, Guid id, bool compTrackChanges, bool empTrackChanges)
+        public async Task<(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)> GetEmployeeForPatchAsync(Guid companyId, Guid id, bool compTrackChanges, bool empTrackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, compTrackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, compTrackChanges);
 
             if (company is null)
                 throw new CompanyNotFoundException(companyId);
 
-            var employeeEntity = repository.Employee.GetEmployee(companyId, id, empTrackChanges);
+            var employeeEntity = await repository.Employee.GetEmployeeAsync(companyId, id, empTrackChanges);
+            
             if (employeeEntity is null)
                 throw new EmployeeNotFoundException(companyId);
             
@@ -138,11 +139,11 @@ namespace Service
             
             return (employeeToPatch, employeeEntity);
         }
-        public void SaveChangesForPatch(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)
+        public async Task SaveChangesForPatchAsync(EmployeeForUpdateDto employeeToPatch, Employee employeeEntity)
         {
             _mapper.Map(employeeToPatch, employeeEntity);
             
-            repository.Save();
+            await repository.SaveAsync();
         }
     }
 }

@@ -24,20 +24,20 @@ namespace Service
             this._mapper = mapper;
         }
 
-        public CompanyDto CreateCompany(CompanyForCreationDto company)
+        public async Task<CompanyDto> CreateCompanyAsync(CompanyForCreationDto company)
         {
             var companyEntity = _mapper.Map<Company>(company);
 
             repository.Company.CreateCompany(companyEntity);
 
-            repository.Save();
+            await repository.SaveAsync();
 
             var companyToReturn = _mapper.Map<CompanyDto>(companyEntity);
 
             return companyToReturn;
         }
 
-        public (IEnumerable<CompanyDto> companies, string ids) CreateCompanyCollection(IEnumerable<CompanyForCreationDto> companyCollection)
+        public async Task<(IEnumerable<CompanyDto> companies, string ids)> CreateCompanyCollectionAsync(IEnumerable<CompanyForCreationDto> companyCollection)
         {
             if (companyCollection is null) 
             {
@@ -51,7 +51,7 @@ namespace Service
                 repository.Company.CreateCompany(companyEntity);
             }
 
-            repository.Save();
+            await repository.SaveAsync();
 
             var companyCollectionToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
 
@@ -60,9 +60,9 @@ namespace Service
             return (companies: companyCollectionToReturn, ids);
         }
 
-        public void DeleteCompany(Guid companyId, bool trackChanges)
+        public async Task DeleteCompanyAsync(Guid companyId, bool trackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, trackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, trackChanges);
 
             if (company is null)
             {
@@ -71,13 +71,13 @@ namespace Service
 
             repository.Company.DeleteCompany(company);
 
-            repository.Save();
+            await repository.SaveAsync();
         }
 
-        public IEnumerable<CompanyDto> GetAllCompanies(bool trackChanges)
+        public async Task<IEnumerable<CompanyDto>> GetAllCompaniesAsync(bool trackChanges)
         {
            
-            var companies = repository.Company.GetAllCompanies(trackChanges);
+            var companies = await repository.Company.GetAllCompaniesAsync(trackChanges);
                 
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
 
@@ -85,14 +85,14 @@ namespace Service
             
         }
 
-        public IEnumerable<CompanyDto> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+        public async Task<IEnumerable<CompanyDto>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
         {
             if (ids is null)
             {
                 throw new CollectionByIdsBadRequestException();
             }
 
-            var companiesEntities = repository.Company.GetByIds(ids, trackChanges);
+            var companiesEntities = await repository.Company.GetByIdsAsync(ids, trackChanges);
 
             if (ids.Count() != companiesEntities.Count()) 
             {
@@ -104,9 +104,9 @@ namespace Service
             return companiesToReturn;
         }
 
-        public CompanyDto GetCompany(Guid companyId, bool trackChanges)
+        public async Task<CompanyDto> GetCompanyAsync(Guid companyId, bool trackChanges)
         {
-            var company = repository.Company.GetCompany(companyId, trackChanges);
+            var company = await repository.Company.GetCompanyAsync(companyId, trackChanges);
 
             if (company == null)
             {
@@ -118,9 +118,9 @@ namespace Service
             return companyDto;
         }
 
-        public void UpdateCompany(Guid companyId, CompanyForUpdateDto company, bool trackChanges)
+        public async Task UpdateCompanyAsync(Guid companyId, CompanyForUpdateDto company, bool trackChanges)
         {
-            var companyEntity = repository.Company.GetCompany(companyId, trackChanges);
+            var companyEntity = await repository.Company.GetCompanyAsync(companyId, trackChanges);
 
             if (companyEntity is null)
             {
@@ -129,7 +129,7 @@ namespace Service
 
             _mapper.Map(company, companyEntity);
 
-            repository.Save();
+            await repository.SaveAsync();
         }
     }
 }

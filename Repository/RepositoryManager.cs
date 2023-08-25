@@ -22,6 +22,6 @@ namespace Repository
 
         public IEmployeeRepository Employee => employeeRepository.Value;
 
-        public void Save() => context.SaveChanges();
+        public Task SaveAsync() => context.SaveChangesAsync();
     }
 }
