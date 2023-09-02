@@ -22,7 +22,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEmploees(Guid companyId)
+        public async Task<IActionResult> GetEmploeesAsync(Guid companyId)
         {
             var emploees = await _service.EmployeeService.GetEmployeesAsync(companyId, trackChanges: false);
 
@@ -30,7 +30,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpGet("{id:guid}", Name = "GetEmployeeForCompany")]
-        public async Task<IActionResult> GetEmploees(Guid companyId, Guid id)
+        public async Task<IActionResult> GetEmploeesAsync(Guid companyId, Guid id)
         {
             var emploee = await _service.EmployeeService.GetEmployeeAsync(companyId, id, trackChanges: false);
 
@@ -38,7 +38,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
+        public async Task<IActionResult> CreateEmployeeForCompanyAsync(Guid companyId, [FromBody] EmployeeForCreationDto employee)
         {
             if (employee is null)
             {
@@ -51,7 +51,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteEmployeeForCompany(Guid companyId, Guid id) 
+        public async Task<IActionResult> DeleteEmployeeForCompanyAsync(Guid companyId, Guid id) 
         {
             await _service.EmployeeService.DeleteEmployeeForCompanyAsync(companyId, id, trackChanges: false);
 
@@ -59,7 +59,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateEmployee(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto employee)
+        public async Task<IActionResult> UpdateEmployeeAsync(Guid companyId, Guid id, [FromBody] EmployeeForUpdateDto employee)
         {
             if (employee is null)
             {
@@ -72,7 +72,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<IActionResult> PartiallyUpdateEmployeeForCompany(Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
+        public async Task<IActionResult> PartiallyUpdateEmployeeForCompanyAsync(Guid companyId, Guid id, [FromBody] JsonPatchDocument<EmployeeForUpdateDto> patchDoc)
         {
             if (patchDoc is null)
                 return BadRequest("patchDoc object sent from client is null.");

@@ -22,7 +22,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCompanies()
+        public async Task<IActionResult> GetCompaniesAsync()
         {
             var companies = await service.CompanyService.GetAllCompaniesAsync(trackChanges: false);
 
@@ -37,7 +37,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPost(Name = "CreateCompany")]
-        public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)
+        public async Task<IActionResult> CreateCompanyAsync([FromBody] CompanyForCreationDto company)
         {
             if (company is null)
             {
@@ -50,7 +50,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpGet("collection/({ids})", Name = "CompanyCollection")]
-        public async Task<IActionResult> GetCompanyCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
+        public async Task<IActionResult> GetCompanyCollectionAsync([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
         {
             var companies = await service.CompanyService.GetByIdsAsync(ids, trackChanges: false);
 
@@ -58,7 +58,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPost("collection")]
-        public async Task<IActionResult> CreateCompanyCollection([FromBody] IEnumerable<CompanyForCreationDto> companies)
+        public async Task<IActionResult> CreateCompanyCollectionAsync([FromBody] IEnumerable<CompanyForCreationDto> companies)
         {
             var result = await service.CompanyService.CreateCompanyCollectionAsync(companies);
 
@@ -66,7 +66,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteCompany(Guid id)
+        public async Task<IActionResult> DeleteCompanyAsync(Guid id)
         {
             await service.CompanyService.DeleteCompanyAsync(id, trackChanges: false);
 
@@ -74,7 +74,7 @@ namespace CompanyEmployees.Presentation.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateCompany(Guid id, [FromBody] CompanyForUpdateDto company)
+        public async Task<IActionResult> UpdateCompanyAsync(Guid id, [FromBody] CompanyForUpdateDto company)
         {
             if (company is null)
             {
