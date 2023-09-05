@@ -17,7 +17,8 @@ namespace CompanyEmployees.Extensions
                 {
                     builder.AllowAnyOrigin()
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .AllowAnyMethod()
+                    .WithExposedHeaders("X-Pagination");
                 });
             });
         }

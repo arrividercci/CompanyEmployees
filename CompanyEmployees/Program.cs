@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NLog;
+using CompanyEmployees.Presentation.ActionFilters;
 
 namespace CompanyEmployees
 {
@@ -36,7 +37,9 @@ namespace CompanyEmployees
             builder.Services.ConfigureRepositoryManager();
             
             builder.Services.ConfigureServiceManager();
-            
+
+            builder.Services.AddScoped<ValidationFilterAttribute>();
+
             builder.Services.AddControllers(config =>
             {
                 config.RespectBrowserAcceptHeader= true;

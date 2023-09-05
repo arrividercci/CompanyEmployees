@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.DataTransferObjects
+namespace Shared.RequestFeatures
 {
-    public record CompanyForUpdateDto : CompanyForManipulationDto
+    public class EmployeeParameters : RequestParameters
     {
     }
 }
