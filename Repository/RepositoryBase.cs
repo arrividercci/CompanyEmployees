@@ -33,5 +33,10 @@ namespace Repository
 
 
         public void Update(T entity) => context.Set<T>().Update(entity);
+
+        public async Task SaveAsync()
+        {
+            await context.SaveChangesAsync();
+        }
     }
 }
